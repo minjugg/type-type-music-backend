@@ -6,7 +6,7 @@
   "singleQuote": false,
   "bracketSpacing": true,
   "trailingComma": "es5",
-  "arrowParens": "avoid",
+  "arrowParens": "always",
   "endOfLine": "auto",
   "printWidth": 80
 }
