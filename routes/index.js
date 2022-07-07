@@ -14,10 +14,10 @@ router.get("/login", function (req, res, next) {
 router.post("/upload", upload.single("audio"), async (req, res, next) => {
   const filename = "filename";
   const bucketname = "typetypemusicbucket";
-  const file = req.body.data;
+  const file = req.file.buffer;
 
   await uploadAudio(filename, bucketname, file);
-  res.json({ file: file });
+  res.send("uploaded successfully");
 });
 
 const s3 = new AWS.S3({
