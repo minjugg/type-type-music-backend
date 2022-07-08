@@ -1,6 +1,7 @@
 require("dotenv").config();
 
 const express = require("express");
+const app = express();
 const path = require("path");
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
@@ -8,8 +9,9 @@ const cors = require("cors");
 
 const middleware = require("./src/middleware");
 const indexRouter = require("./routes/index");
+const connectMongoDB = require("./src/config/connect-mongoDB");
 
-const app = express();
+connectMongoDB();
 
 app.use(cors());
 app.use(middleware.authTokenMiddleware);
