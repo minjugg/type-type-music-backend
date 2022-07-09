@@ -7,18 +7,33 @@ const { memoryStorage } = require("multer");
 const storage = memoryStorage();
 const upload = multer({ storage });
 
-router.get("/login", function (req, res, next) {
+const User = require("../src/model/User");
+
+router.get("/auth", (req, res, next) => {
   return res.json({ message: "login successfully done" });
 });
 
-router.post("/upload", upload.single("audio"), async (req, res, next) => {
-  const filename = "filename";
-  const bucketname = process.env.BUCKET_NAME;
-  const file = req.file.buffer;
+router.post(
+  "/users/:username/records",
+  upload.single("audio"),
+  async (req, res, next) => {
+    const { username } = req.params;
 
-  await uploadAudio(filename, bucketname, file);
-  res.send("uploaded successfully");
-});
+    const filename = username + Date.now();
+    const bucketname = process.env.BUCKET_NAME;
+    const file = req.file.buffer;
+
+    const audioData = await uploadAudio(filename, bucketname, file);
+    const storageUrl = audioData.Location;
+
+    await User.create({
+      username,
+      record: { storageUrl },
+    });
+
+    res.send("uploaded successfully");
+  }
+);
 
 const s3 = new AWS.S3({
   accessKeyId: process.env.ACCESS_KEY_ID,
