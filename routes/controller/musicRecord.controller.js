@@ -42,3 +42,25 @@ exports.newMusicRecord = async (req, res, next) => {
 
   res.send("uploaded successfully");
 };
+
+exports.pressLikes = async (req, res, next) => {
+  const user = await User.updateOne(
+    { username: req.params.username },
+    {
+      $set: {
+        "record.$[pressed].isLiked": !req.body.isLiked,
+      },
+    },
+    {
+      arrayFilters: [
+        {
+          "pressed._id": {
+            $eq: req.params.recordId,
+          },
+        },
+      ],
+    }
+  );
+
+  return res.send(user);
+};

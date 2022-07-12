@@ -11,4 +11,6 @@ router.post(
   recordController.newMusicRecord
 );
 
+router.patch("/users/:username/records/:recordId", recordController.pressLikes);
+
 module.exports = router;
