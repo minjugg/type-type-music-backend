@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const recordController = require("./controller/musicRecord.controller");
-const { singleUpload } = require("../src/utils/uploadAudio");
+const { singleUpload } = require("../src/middleware/multer.js");
 
 router.get("/users/:username/records", recordController.allMusicRecords);
 
