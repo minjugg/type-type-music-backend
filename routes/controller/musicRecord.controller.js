@@ -6,6 +6,10 @@ exports.allMusicRecords = async (req, res, next) => {
 
   const user = await User.findOne({ username });
 
+  if (!user) {
+    return res.send({ message: "No music made yet." });
+  }
+
   const records = user.record;
 
   return res.send(records);
@@ -44,8 +48,10 @@ exports.newMusicRecord = async (req, res, next) => {
 };
 
 exports.pressLikes = async (req, res, next) => {
+  const { username } = req.params;
+
   const user = await User.updateOne(
-    { username: req.params.username },
+    { username },
     {
       $set: {
         "record.$[pressed].isLiked": !req.body.isLiked,

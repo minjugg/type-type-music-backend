@@ -1,16 +1,23 @@
 const express = require("express");
 const router = express.Router();
-const recordController = require("./controller/musicRecord.controller");
-const { singleUpload } = require("../src/middleware/multer.js");
+const musicRecordController = require("./controller/musicRecord.controller");
 
-router.get("/users/:username/records", recordController.allMusicRecords);
+const multer = require("multer");
+const { memoryStorage } = require("multer");
+const storage = memoryStorage();
+const upload = multer({ storage });
+
+router.get("/users/:username/records", musicRecordController.allMusicRecords);
 
 router.post(
   "/users/:username/records",
-  singleUpload,
-  recordController.newMusicRecord
+  upload.single("audio"),
+  musicRecordController.newMusicRecord
 );
 
-router.patch("/users/:username/records/:recordId", recordController.pressLikes);
+router.patch(
+  "/users/:username/records/:recordId",
+  musicRecordController.pressLikes
+);
 
 module.exports = router;
