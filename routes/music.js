@@ -17,7 +17,12 @@ router.post(
 
 router.patch(
   "/users/:username/records/:recordId",
-  musicRecordController.pressLikes
+  musicRecordController.toggleLikes
+);
+
+router.delete(
+  "/users/:username/records/:recordId",
+  musicRecordController.existingMusicRecord
 );
 
 module.exports = router;

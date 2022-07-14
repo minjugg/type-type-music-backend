@@ -47,8 +47,8 @@ exports.newMusicRecord = async (req, res, next) => {
   res.send("uploaded successfully");
 };
 
-exports.pressLikes = async (req, res, next) => {
-  const { username } = req.params;
+exports.toggleLikes = async (req, res, next) => {
+  const { username, recordId } = req.params;
 
   const user = await User.updateOne(
     { username },
@@ -61,10 +61,27 @@ exports.pressLikes = async (req, res, next) => {
       arrayFilters: [
         {
           "pressed._id": {
-            $eq: req.params.recordId,
+            $eq: recordId,
           },
         },
       ],
+    }
+  );
+
+  return res.send(user);
+};
+
+exports.existingMusicRecord = async (req, res, next) => {
+  const { username, recordId } = req.params;
+
+  const user = await User.updateOne(
+    { username },
+    {
+      $pull: {
+        record: {
+          _id: { $eq: recordId },
+        },
+      },
     }
   );
 
