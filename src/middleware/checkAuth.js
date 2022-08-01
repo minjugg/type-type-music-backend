@@ -1,23 +1,27 @@
 const admin = require("../config/firebase-server");
+const errorMessage = require("../constant/errorMessages");
 
 exports.checkAuth = async (req, res, next) => {
-  const token = req.headers["authorization"]?.split(" ");
+  try {
+    const token = req.headers["authorization"]?.split(" ");
 
-  if (!token) {
-    res.status(400).json({ message: "No header received" });
-  } else if (!token[1]) {
-    res.status(403).json({ message: "No token received" });
-  } else {
-    try {
+    if (!token) {
+      throw new Error("notFoundHeader");
+    } else if (!token[1]) {
+      throw new Error("notFoundToken");
+    } else {
       const decodedToken = await admin.auth().verifyIdToken(token[1]);
 
-      if (decodedToken) {
-        return next();
+      if (!decodedToken) {
+        throw new Error("unauthorizedUser");
       }
 
-      return res.status(403).json({ message: "Unauthorized user" });
-    } catch (err) {
-      res.status(500).json(err);
+      next();
     }
+  } catch (error) {
+    next({
+      status: errorMessage[error.message]?.status,
+      message: errorMessage[error.message]?.message,
+    });
   }
 };
