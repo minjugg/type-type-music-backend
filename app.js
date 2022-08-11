@@ -7,12 +7,12 @@ const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 const cors = require("cors");
 
-const authRouter = require("./Routes/auth");
-const musicRouter = require("./Routes/music");
+const authRouter = require("./routes/auth");
+const recordRouter = require("./routes/record");
 const connectMongoDB = require("./src/config/connect-mongoDB");
 
 const { checkAuth } = require("./src/middleware/checkAuth");
-const { setUsernameParams } = require("./src/middleware/setUsernameParams");
+const { setUserIdParams } = require("./src/middleware/setUserIdParams");
 const { errorHandler } = require("./src/middleware/errorHandler");
 
 connectMongoDB();
@@ -35,11 +35,11 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
 app.use("/auth", authRouter);
-app.use("/users/:username/records", setUsernameParams, musicRouter);
+app.use("/users/:userId/records", setUserIdParams, recordRouter);
 app.use("*", (req, res, next) => {
   next("nonExistingPage");
 });
 
 app.use(errorHandler);
 
-module.exports = app;
+module.exports = { app };

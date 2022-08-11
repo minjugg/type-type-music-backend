@@ -1,10 +1,10 @@
 module.exports = {
   notFoundHeader: {
     status: 400,
-    message: "Np",
+    message: "요청의 헤더가 존재하지 않습니다.",
   },
   notFoundToken: {
-    status: 403,
+    status: 401,
     message: "사용자의 토큰이 존재하지 않습니다.",
   },
   unAuthorizedUser: {

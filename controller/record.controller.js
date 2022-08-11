@@ -1,11 +1,11 @@
 const User = require("../src/model/User");
 const { uploadAudioToAWS } = require("../src/utils/uploadAudio");
 
-exports.getAllMusic = async (req, res, next) => {
+exports.getAllRecords = async (req, res, next) => {
   try {
-    const { username } = req;
+    const { userId } = req;
 
-    const user = await User.findOne({ username });
+    const user = await User.findOne({ userId });
 
     if (!user) {
       return res.json({ message: "No music made yet." });
@@ -19,28 +19,28 @@ exports.getAllMusic = async (req, res, next) => {
   }
 };
 
-exports.createMusic = async (req, res, next) => {
+exports.createRecord = async (req, res, next) => {
   try {
-    const { username } = req;
+    const { userId } = req;
 
-    const filename = username + Date.now();
+    const filename = userId + Date.now();
     const bucketname = process.env.BUCKET_NAME;
     const file = req.file.buffer;
-    const tag = req.body.tag;
+    const { tag } = req.body;
 
     const audioData = await uploadAudioToAWS(filename, bucketname, file);
     const storageUrl = audioData.Location;
 
-    const existingUser = await User.find({ username });
+    const existingUser = await User.find({ userId });
 
     if (!existingUser.length) {
       await User.create({
-        username,
+        userId,
         record: { storageUrl, tag },
       });
     } else {
       await User.findOneAndUpdate(
-        { username },
+        { userId },
         {
           $push: {
             record: { storageUrl, tag },
@@ -49,7 +49,7 @@ exports.createMusic = async (req, res, next) => {
       );
     }
 
-    return res.json({ message: "성공적으로 업로드되었습니다." });
+    return res.json({ message: "Successfully uploaded." });
   } catch (error) {
     next(error);
   }
@@ -57,11 +57,11 @@ exports.createMusic = async (req, res, next) => {
 
 exports.toggleLikeById = async (req, res, next) => {
   try {
-    const { username } = req;
+    const { userId } = req;
     const { recordId } = req.params;
 
     const user = await User.updateOne(
-      { username },
+      { userId },
       {
         $set: {
           "record.$[pressed].isLiked": !req.body.isLiked,
@@ -78,19 +78,19 @@ exports.toggleLikeById = async (req, res, next) => {
       }
     );
 
-    return res.json(user);
+    return res.status(201).json(user);
   } catch (error) {
     next(error);
   }
 };
 
-exports.deleteMusicById = async (req, res, next) => {
+exports.deleteRecordById = async (req, res, next) => {
   try {
-    const { username } = req;
+    const { userId } = req;
     const { recordId } = req.params;
 
     const user = await User.updateOne(
-      { username },
+      { userId },
       {
         $pull: {
           record: {

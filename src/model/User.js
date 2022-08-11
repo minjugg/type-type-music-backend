@@ -12,12 +12,12 @@ const recordSchema = new Schema({
   },
   tag: {
     type: String,
-    default: "",
+    default: "No name",
   },
 });
 
 const userSchema = new Schema({
-  username: {
+  userId: {
     type: String,
     required: true,
   },

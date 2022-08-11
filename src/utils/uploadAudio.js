@@ -15,9 +15,9 @@ exports.uploadAudioToAWS = (filename, bucketname, file) => {
       ACL: "public-read",
     };
 
-    s3.upload(params, (err, data) => {
-      if (err) {
-        reject(err);
+    s3.upload(params, (error, data) => {
+      if (error) {
+        reject(error);
       } else {
         resolve(data);
       }
